@@ -1,6 +1,5 @@
 'use strict'
 
-const mongoose = require('mongoose')
 const User = require('../models/user')
 const service = require('../service/index')
 
@@ -20,6 +19,19 @@ function signUp (req, res){
 
 function signIn (req, res){
 
+    User.find({ email: req.body.email}, (err, user) =>{
+        if(err) return res.status(500).send({message: err})
+        if(!user) return res.status(400).send({message: 'No existe el usuerio'})
+
+
+        req.user = user
+
+        res.status(200).send({
+            message:'Login correcto',
+            token: service.createToken(user)
+        })
+
+    })
 }
 
 module.exports = {
